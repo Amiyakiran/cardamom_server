@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken")
 const crypto = require("crypto") // crypto is inbuilt to node.js so no instalation is needed
 // import crypto from "crypto"
 const Session = require("../models/Session")
-const {sendResetEmail} = require('../nodemail/resetpassword')
+const { sendResetEmail } = require('../nodemail/resetpassword')
 
 //register
 exports.registerController = async (req, res) => {
@@ -342,12 +342,12 @@ exports.forgotPasswordController = async (req, res) => {
     // user.resetPasswordExpires = Date.now() + 30 * 60 * 1000;
     // await user.save();
     // const resetPasswordExpires = Date.now() + 30 * 60 * 1000;
-    const updatedUser = await users.findByIdAndUpdate({ _id:user._id }, {
-      
-        resetPasswordToken: resetToken,
-        resetPasswordExpires:Date.now() + 30 * 60 * 1000
-      
-    },{ returnDocument: 'after', strict:false})
+    const updatedUser = await users.findByIdAndUpdate({ _id: user._id }, {
+
+      resetPasswordToken: resetToken,
+      resetPasswordExpires: Date.now() + 30 * 60 * 1000
+
+    }, { returnDocument: 'after', strict: false })
 
     console.log(updatedUser);
 
@@ -355,7 +355,7 @@ exports.forgotPasswordController = async (req, res) => {
 
     const resetUrl = `${process.env.CLIENT_URL}` + `/reset_password/${resetToken}`;
     console.log(resetUrl);
-    
+
 
     await sendResetEmail(email, resetUrl);
 
@@ -370,4 +370,88 @@ exports.forgotPasswordController = async (req, res) => {
       message: "Something went wrong",
     });
   }
+}
+
+
+//resetPassword
+exports.resetPasswordController = async (req, res) => {
+  const { token } = req.params
+  const { email, password } = req.body
+  console.log(email, password, token);
+  try {
+
+    const user = await users.findOne({
+      resetPasswordToken: token,
+
+      resetPasswordExpires: {
+        $gt: Date.now(),
+      },
+    });
+    console.log(user);
+    
+
+    if (!user) {
+      return res.status(400).json({
+        message:
+          "Password reset link is invalid or expired",
+      });
+    }
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    user.password = hashedPassword;
+
+    /*
+      Invalidate reset token
+      */
+
+    user.resetPasswordToken = null;
+    user.resetPasswordExpires = null;
+
+    await user.save();
+
+    res.status(200).json({
+      message:
+        "Password reset successfully",
+    });
+
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Something went wrong",
+    });
+  }
+
+}
+
+//get all users
+exports.getAllUsersController = async(req, res)=>{
+  try {
+    const allUsers = await users.find()
+    res.status(200).json({
+    allUsers
+    })
+    
+  } catch (error) {
+    res.status(200).json({
+      message:"Internal server error"
+    })
+  }
+}
+
+//delete a user
+exports.deleteAUserController = async(req, res)=>{
+  const {id} = req.params
+  console.log(id);
+  try {
+    await users.findByIdAndDelete({_id:id})
+    res.status(200).json({
+      message:"deleted successfully"
+    })
+    
+  } catch (error) {
+    res.status(500).json({
+      message:"Internal server error"
+    })
+  }
+  
 }
