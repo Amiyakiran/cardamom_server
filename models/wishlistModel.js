@@ -2,6 +2,10 @@ const mongoose = require('mongoose')
 
 
 const wishlistSchema = new mongoose.Schema({
+    productid:{
+        type:String,
+        required:true
+    },
     title:{
         type:String,
         required:true

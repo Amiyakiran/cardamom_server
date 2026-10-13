@@ -1,8 +1,4 @@
-const messages = require("../models/messageModel");
 const products = require("../models/productModel");
-
-
-
 
 
 //add product

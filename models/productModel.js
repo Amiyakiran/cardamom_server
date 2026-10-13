@@ -27,6 +27,10 @@ const productSchema = new mongoose.Schema({
          type:Number,
         required:true
     },
+    noOfOrders:{
+        type:Number,
+        default:0
+    },
     date:{
          type:String,
         required:true

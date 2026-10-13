@@ -5,15 +5,24 @@ const wishlist = require('../models/wishlistModel')
 exports.addToWishlistController = async (req, res) => {
     const { userId } = req.params
     console.log(userId);
-    const { title, image, varient, description, price } = req.body
-    console.log(title, image, varient, description, price);
+    const { _id, title, image, varient, description, price } = req.body
+    console.log(_id, title, image, varient, description, price);
     try {
-         await wishlist.create({
-            title, image, varient, description, price, userId
-        })
-        res.status(200).json({
-            message: "Added to wishlist successfully"
-        })
+        const wishlistItems = await wishlist.findOne({ productid: _id, userId })
+        if (wishlistItems) {
+            res.status(400).json({
+                message: 'product already in wishlist'
+            })
+        }
+        else {
+            await wishlist.create({
+                productid: _id, title, image, varient, description, price, userId
+            })
+            res.status(200).json({
+                message: "Added to wishlist successfully"
+            })
+        }
+
     }
     catch (error) {
         res.status(500).json({
@@ -43,8 +52,11 @@ exports.getWishlistController = async (req, res) => {
 //delete from wishlist
 exports.deleteFromWishlistController = async (req, res) => {
     const { id } = req.params
+    const { userId } = req.body
+    console.log(id);
+
     try {
-        await wishlist.findByIdAndDelete(id)
+        await wishlist.deleteOne({ productid: id, userId })
         res.status(200).json({
             message: "Item deleted from wishlist successfully"
         })

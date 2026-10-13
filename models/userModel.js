@@ -29,6 +29,16 @@ const userSchema = new mongoose.Schema(
     },
     resetPasswordExpires:{
       type:Date
+    },
+    photo:{
+      type:String,
+      default:""
+    },
+    address:{
+      type:Array
+    },
+    paymentMethod:{
+      type:Array
     }
   },
   {

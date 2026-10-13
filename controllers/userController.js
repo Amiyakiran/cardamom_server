@@ -189,12 +189,15 @@ exports.googleLoginController = async (req, res) => {
 
     const normalizedEmail = email.trim().toLowerCase()
     let user = await users.findOne({ email: normalizedEmail })
+     // 5. Hash password
+    const hashedPassword = await bcrypt.hash(password, Number(process.env.SALT))
+    console.log(hashedPassword);
 
     if (!user) {
       user = await users.create({
         name: name.trim(),
         email: normalizedEmail,
-        password
+        password:hashedPassword
       })
     }
 
@@ -274,7 +277,10 @@ exports.getMeController = async (req, res) => {
       user: {
         id: user._id,
         name: user.name,
-        email: user.email
+        email: user.email,
+        photo: user.photo,
+        address: user.address,
+        paymentMethod: user.paymentMethod
       }
     })
   } catch (error) {
@@ -454,4 +460,25 @@ exports.deleteAUserController = async(req, res)=>{
     })
   }
   
+}
+
+//update the profile image
+exports.updateProfileImageController = async(req, res)=>{
+  const {id} = req.params
+  const image = req.file.filename
+  console.log(id, image);
+  
+  try {
+
+    await users.updateOne({_id:id},{$set:{photo:image}})
+    res.status(200).json({
+      "message":"profile updated successfully",
+      "photo":image
+    })
+    
+  } catch (error) {
+    res.status(500).json({
+      message:"Internal server error"
+    })
+  }
 }
