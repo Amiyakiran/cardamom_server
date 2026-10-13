@@ -189,7 +189,7 @@ exports.googleLoginController = async (req, res) => {
 
     const normalizedEmail = email.trim().toLowerCase()
     let user = await users.findOne({ email: normalizedEmail })
-     // 5. Hash password
+    // 5. Hash password
     const hashedPassword = await bcrypt.hash(password, Number(process.env.SALT))
     console.log(hashedPassword);
 
@@ -197,7 +197,7 @@ exports.googleLoginController = async (req, res) => {
       user = await users.create({
         name: name.trim(),
         email: normalizedEmail,
-        password:hashedPassword
+        password: hashedPassword
       })
     }
 
@@ -394,7 +394,7 @@ exports.resetPasswordController = async (req, res) => {
       },
     });
     console.log(user);
-    
+
 
     if (!user) {
       return res.status(400).json({
@@ -430,55 +430,100 @@ exports.resetPasswordController = async (req, res) => {
 }
 
 //get all users
-exports.getAllUsersController = async(req, res)=>{
+exports.getAllUsersController = async (req, res) => {
   try {
     const allUsers = await users.find()
     res.status(200).json({
-    allUsers
+      allUsers
     })
-    
+
   } catch (error) {
     res.status(200).json({
-      message:"Internal server error"
+      message: "Internal server error"
     })
   }
 }
 
 //delete a user
-exports.deleteAUserController = async(req, res)=>{
-  const {id} = req.params
+exports.deleteAUserController = async (req, res) => {
+  const { id } = req.params
   console.log(id);
   try {
-    await users.findByIdAndDelete({_id:id})
+    await users.findByIdAndDelete({ _id: id })
     res.status(200).json({
-      message:"deleted successfully"
+      message: "deleted successfully"
     })
-    
+
   } catch (error) {
     res.status(500).json({
-      message:"Internal server error"
+      message: "Internal server error"
     })
   }
-  
+
 }
 
 //update the profile image
-exports.updateProfileImageController = async(req, res)=>{
-  const {id} = req.params
+exports.updateProfileImageController = async (req, res) => {
+
+  const { id } = req.params
   const image = req.file.filename
   console.log(id, image);
-  
+
   try {
 
-    await users.updateOne({_id:id},{$set:{photo:image}})
+    await users.updateOne({ _id: id }, { $set: { photo: image } })
     res.status(200).json({
-      "message":"profile updated successfully",
-      "photo":image
+      "message": "profile updated successfully",
+      "photo": image
     })
-    
+
   } catch (error) {
     res.status(500).json({
-      message:"Internal server error"
+      message: "Internal server error"
+    })
+  }
+}
+
+//add address
+exports.addAddressController = async (req, res) => {
+  const { id } = req.params
+  console.log(id);
+
+  console.log(req.body)
+  try {
+    await users.updateOne({ _id: id }, { $push: { address: req.body } })
+    res.status(200).json({
+      "message": "Address Updated Successfully"
+    })
+
+  } catch (error) {
+    res.status(500).json({
+      "message": "Internal Server Error"
+    })
+  }
+}
+
+//delete a address
+exports.deleteAddressController = async (req, res) => {
+  const { userId } = req.params
+  const { index } = req.body
+  console.log(userId, index);
+  
+
+  try {
+    const user = await users.findOne({_id:userId});
+
+    if (user && index >= 0 && index < user.address.length) {
+      user.address.splice(index, 1);
+      await user.save();
+    }
+    res.status(200).json({
+      "message":"Deleted Successfully"
+    })
+
+  } catch (error) {
+    res.status(500).json({
+      "message": "Internal server error"
     })
   }
 }

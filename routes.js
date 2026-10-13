@@ -72,18 +72,23 @@ routes.delete('/delete_from_cart/:id', cartController.deleteFromCartController)
 
 
 //increase the product count
-routes.post('/increment-count/:id',cartController.increamentCountController)
+routes.put('/increment-count/:id',cartController.increamentCountController)
 
 
 //decrement the product count
-routes.post('/decrement-count/:id',cartController.decrementProductCountController)
+routes.put('/decrement-count/:id',cartController.decrementProductCountController)
 
 //update the product quantity
-routes.post('/update-quantity/:id',cartController.updateQuantityController)
+routes.put('/update-quantity/:id',cartController.updateQuantityController)
 
 //update profile image
-routes.post('/update-profile-image/:id',multerConfig.single('image'),userController.updateProfileImageController)
+routes.put('/update-profile-image/:id',multerConfig.single('image'),userController.updateProfileImageController)
 
+// update the address
+routes.put('/update-address/:id',userController.addAddressController)
+
+//delete Address
+routes.delete('/delete_address/:userId', userController.deleteAddressController)
 
 
 
