@@ -21,6 +21,7 @@ const blogSchema = new mongoose.Schema({
          type:String,
         required:true
     },
+    // stored formated html here
     longDescription:{
          type:String,
         required:true
