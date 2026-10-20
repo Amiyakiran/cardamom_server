@@ -149,3 +149,21 @@ exports.updateQuantityController = async (req, res) => {
         })
     }
 }
+
+//empty cart
+exports.emptyCartController = async(req, res)=>{
+    const {id} = req.params
+    console.log(id);
+    
+    try {
+        await cartModel.deleteMany({userId:id})
+        res.status(200).json({
+            "message":"emptied cart"
+        })
+        
+    } catch (error) {
+        res.status(500).json({
+            "message": "Internal server error"
+        })
+    }
+}

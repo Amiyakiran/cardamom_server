@@ -6,6 +6,7 @@ const blogController = require('./controllers/blogController')
 const productController = require('./controllers/productController')
 const wishlistController = require('./controllers/wishlistController')
 const cartController = require('./controllers/cartController')
+const orderController = require('./controllers/orderController')
 
 
 
@@ -89,6 +90,12 @@ routes.put('/update-address/:id',userController.addAddressController)
 
 //delete Address
 routes.delete('/delete_address/:userId', userController.deleteAddressController)
+
+//place order
+routes.post('/place-order', orderController.addOrdersController )
+
+//empty cart
+routes.delete('/empty-cart/:id', cartController.emptyCartController)
 
 
 
