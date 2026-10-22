@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 
-const orderSchema = mongoose.Schema({
+const orderSchema = new mongoose.Schema({
     orderId: {
         type: String,
         required: true
@@ -12,6 +12,10 @@ const orderSchema = mongoose.Schema({
     email: {
         type: String,
         required: true
+    },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users"
     },
     address: {
         type: Object,

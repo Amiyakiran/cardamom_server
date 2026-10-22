@@ -7,6 +7,7 @@ const productController = require('./controllers/productController')
 const wishlistController = require('./controllers/wishlistController')
 const cartController = require('./controllers/cartController')
 const orderController = require('./controllers/orderController')
+const inventoryController = require('./controllers/inventoryController')
 
 
 
@@ -41,6 +42,9 @@ routes.get('/a_product/:id', productController.getaProductController)
 
 //get home products
 routes.get('/home_products', productController.getHomeProductsController)
+
+//delete Orders
+routes.delete('/delete_order/:id', orderController.deleteAOrderController )
 
 
 
@@ -97,6 +101,11 @@ routes.post('/place-order', orderController.addOrdersController )
 //empty cart
 routes.delete('/empty-cart/:id', cartController.emptyCartController)
 
+//get all user order
+routes.get('/get-user-orders',orderController.getAllUserOrdersController)
+
+
+
 
 
 //------------------------------------------------------------------
@@ -137,5 +146,23 @@ routes.post('/edit_blog/:id', multerConfig.single('image'), blogController.editB
 
 //delete blog 
 routes.delete('/delete_blog/:id', blogController.deleteBlogController)
+
+//get all orders
+routes.get('/all-orders', orderController.getAllOrdersController)
+//get a orders
+routes.get('/get-particular-orders/:id', orderController.getAOrderController)
+
+//update the order Status
+routes.put('/update-order-status/:id',orderController.updateOrderStatusController)
+
+//add inventory
+routes.post('/add-inventory', inventoryController.addToInventoryController)
+
+//get inventory reports
+routes.get('/inventories', inventoryController.getAllInventoriesController)
+
+//delete inventory report
+routes.delete('/delete-inventory/:id', inventoryController.deleteInventoryController)
+
 
 module.exports = routes;
