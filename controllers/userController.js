@@ -6,6 +6,13 @@ const crypto = require("crypto") // crypto is inbuilt to node.js so no instalati
 const Session = require("../models/Session")
 const { sendResetEmail } = require('../nodemail/resetpassword')
 
+const isProduction = process.env.NODE_ENV === "production"
+const sessionCookieOptions = {
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? "none" : "lax"
+}
+
 //register
 exports.registerController = async (req, res) => {
   try {
@@ -141,13 +148,7 @@ exports.loginController = async (req, res) => {
       "sessionId",
       sessionId,
       {
-        httpOnly: true,
-
-        secure:
-          process.env.NODE_ENV === "production",//to know the application is running inthe production face.
-
-        sameSite: "lax",
-
+        ...sessionCookieOptions,
         ...(maxAge && {
           maxAge
         })
@@ -215,9 +216,7 @@ exports.googleLoginController = async (req, res) => {
     })
 
     res.cookie("sessionId", sessionId, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      ...sessionCookieOptions,
       ...(maxAge && { maxAge })
     })
 
@@ -299,9 +298,7 @@ exports.logoutController = async (req, res) => {
     }
 
     res.clearCookie("sessionId", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax"
+      ...sessionCookieOptions
     })
 
     return res.status(200).json({ message: "Logged out successfully" })
