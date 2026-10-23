@@ -9,7 +9,7 @@ const cookieParser = require("cookie-parser");
 
 const server = express();
 server.use(cors({
-    origin: "http://localhost:5173",
+    origin: "https://cardamom-frontend-yumh.vercel.app",
     credentials: true
   }));
 server.use(express.json());
